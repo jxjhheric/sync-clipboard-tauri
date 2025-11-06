@@ -248,7 +248,6 @@ All tests pass when:
 ### App doesn't appear in share menu
 - Rebuild and reinstall APK
 - Check tauri.conf.json configuration
-- Verify capabilities include share-target:default
 - Restart device
 
 ### Content not uploading

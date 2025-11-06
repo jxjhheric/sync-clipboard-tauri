@@ -17,10 +17,6 @@ Successfully implemented Android Share Intent integration for the sync-clipboard
 - Configured MIME types: `text/plain` and `text/uri-list`
 - Enables the app to appear in Android share menus for these content types
 
-#### `src-tauri/capabilities/default.json`
-- Added `share-target:default` permission
-- Allows the app to receive and process share intents
-
 ### 2. Backend Implementation (Rust)
 
 #### `src-tauri/src/lib.rs`
@@ -158,7 +154,6 @@ async function setupShareTargetListener() {
 | File | Changes | Type |
 |------|---------|------|
 | src-tauri/tauri.conf.json | +3 lines | Config |
-| src-tauri/capabilities/default.json | +1 line | Permission |
 | src-tauri/src/lib.rs | +19 lines | Rust Backend |
 | src/main.ts | +33 lines | TypeScript |
 | src/router/router.ts | +5 lines | Vue Router |
