@@ -1,0 +1,104 @@
+name: 🧪 测试构建 (Test Build)
+
+on:
+  push:
+    branches:
+      - ci-github-actions-build-apk
+  workflow_dispatch:
+
+jobs:
+  test-build:
+    name: 🧪 测试构建环境
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 检出代码
+        uses: actions/checkout@v5
+
+      - name: 📦 安装系统依赖
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.0-dev \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
+      - name: 🦀 安装 Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: 📦 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: 🟢 安装 Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20.x"
+          cache: "pnpm"
+
+      - name: 📦 安装前端依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔍 检查项目配置
+        run: |
+          echo "📋 项目信息:"
+          echo "- Node.js 版本: $(node --version)"
+          echo "- pnpm 版本: $(pnpm --version)"
+          echo "- Rust 版本: $(rustc --version)"
+          echo "- Tauri CLI 版本: $(pnpm tauri --version)"
+          echo ""
+          
+          echo "📱 Tauri 配置:"
+          jq -r '.productName + " v" + .version' ./src-tauri/tauri.conf.json
+          echo ""
+          
+          echo "🔧 可用脚本:"
+          jq -r '.scripts | keys[]' package.json | head -10
+
+      - name: 🏗️ 测试前端构建
+        run: |
+          echo "🔨 构建前端..."
+          pnpm build
+          
+          if [ -d "dist" ]; then
+            echo "✅ 前端构建成功"
+            echo "📦 构建产物大小:"
+            du -sh dist/*
+          else
+            echo "❌ 前端构建失败"
+            exit 1
+          fi
+
+      - name: 🧪 运行类型检查
+        run: |
+          echo "🔍 运行 TypeScript 类型检查..."
+          pnpm vue-tsc --noEmit -p tsconfig.app.json
+          echo "✅ 类型检查通过"
+
+      - name: 📝 运行代码检查
+        run: |
+          echo "🔍 运行代码格式和风格检查..."
+          pnpm biome check .
+          echo "✅ 代码检查通过"
+
+      - name: 📊 生成构建报告
+        run: |
+          echo "## 🧪 测试构建报告" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ 通过的检查" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ 环境配置正确" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ 依赖安装成功" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ 前端构建通过" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ TypeScript 类型检查通过" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ 代码风格检查通过" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📋 环境信息" >> $GITHUB_STEP_SUMMARY
+          echo "- Node.js: $(node --version)" >> $GITHUB_STEP_SUMMARY
+          echo "- Rust: $(rustc --version)" >> $GITHUB_STEP_SUMMARY
+          echo "- pnpm: $(pnpm --version)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎯 下一步" >> $GITHUB_STEP_SUMMARY
+          echo "现在可以尝试完整的 APK 构建流程了！" >> $GITHUB_STEP_SUMMARY
