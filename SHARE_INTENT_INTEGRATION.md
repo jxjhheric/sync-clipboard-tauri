@@ -15,9 +15,6 @@ The sync-clipboard-tauri application now supports receiving shared content from 
 - Configured MIME types: `text/plain` and `text/uri-list`
 - This enables Android intent filtering for these content types
 
-#### capabilities/default.json
-- Added `share-target:default` permission to allow the app to receive shared content
-
 ### 2. Backend (Rust)
 
 #### src-tauri/src/lib.rs

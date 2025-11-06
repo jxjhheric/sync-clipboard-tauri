@@ -18,7 +18,6 @@
     "fs:default",
     "toast:default",
     "deep-link:default",
-    "share-target:default",
     {
       "identifier": "fs:allow-write-text-file",
       "allow": [

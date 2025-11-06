@@ -5,10 +5,9 @@
 ### 1. Share Intent Handler ✅
 - **Requirement**: Implement Android Intent handling to receive content from other applications
 - **Implementation**:
-  - ✅ Added `tauri-plugin-sharetarget` configuration in `tauri.conf.json`
-  - ✅ Configured MIME types: `text/plain` and `text/uri-list`
-  - ✅ Added `share-target:default` permission in capabilities
-  - ✅ Implemented `handle_share_intent()` Rust command
+   - ✅ Added `tauri-plugin-sharetarget` configuration in `tauri.conf.json`
+   - ✅ Configured MIME types: `text/plain` and `text/uri-list`
+   - ✅ Implemented `handle_share_intent()` Rust command
   - ✅ Set up event listener in main.ts with `setupShareTargetListener()`
   - ✅ Event routes to dedicated `/share-target` page
 
@@ -105,10 +104,9 @@
 
 ### Modified Files
 1. `src-tauri/tauri.conf.json` - Added share-target plugin configuration
-2. `src-tauri/capabilities/default.json` - Added share-target permission
-3. `src-tauri/src/lib.rs` - Added handle_share_intent command
-4. `src/main.ts` - Added share target listener setup
-5. `src/router/router.ts` - Added /share-target route
+2. `src-tauri/src/lib.rs` - Added handle_share_intent command
+3. `src/main.ts` - Added share target listener setup
+4. `src/router/router.ts` - Added /share-target route
 
 ### New Files
 1. `src/services/share-service.ts` - Share intent service functions
