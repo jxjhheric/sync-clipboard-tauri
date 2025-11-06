@@ -34,6 +34,48 @@
 
     <img height="500" src="https://raw.githubusercontent.com/bling-yshs/ys-image-host/main/img/Screenshot_20251005_133057.jpg"  alt="pic"/>
 
+## 📱 APK 下载
+
+### 推荐方式：自动构建
+
+1. 进入 [GitHub Actions](https://github.com/bling-yshs/sync-clipboard-tauri/actions) 页面
+2. 选择 "📱 构建 APK (Build APK)" 工作流
+3. 点击 "Run workflow" 手动触发构建
+4. 构建完成后在 Artifacts 中下载 APK
+
+### 发布版本
+
+从 [Releases](https://github.com/bling-yshs/sync-clipboard-tauri/releases) 页面下载最新的稳定版本。
+
+### 构建指南
+
+详细的构建说明请参考 [APK 构建指南](docs/APK_BUILD_GUIDE.md)。
+
+## 🔧 开发
+
+### 本地构建
+
+```bash
+# 安装依赖
+pnpm install
+
+# 开发模式
+pnpm dev
+
+# 构建 APK
+pnpm android-build
+
+# 代码检查
+pnpm check
+```
+
+### 环境要求
+
+- Node.js 20+
+- Rust 1.70+
+- Android SDK 和 NDK
+- pnpm
+
 ## 项目结构
 
 ```
@@ -47,7 +89,10 @@ sync-clipboard-tauri/
 │   └── views/              # 页面视图
 ├── src-tauri/              # Tauri 后端源码
 ├── plugins-workspace/      # Tauri 插件工作区（我修改了 tauri clipboard 插件的源码，所以需要把它包含在仓库里）
-└── tauri-plugin-quicktile/ # 自定义快速磁贴插件（其实也包含别的功能，但是懒得改名了）
+├── tauri-plugin-quicktile/ # 自定义快速磁贴插件（其实也包含别的功能，但是懒得改名了）
+├── .github/workflows/      # GitHub Actions 工作流
+├── docs/                   # 项目文档
+└── scripts/                # 构建脚本
 ```
 
 ## 许可证
