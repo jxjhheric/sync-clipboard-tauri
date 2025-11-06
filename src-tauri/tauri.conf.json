@@ -43,6 +43,9 @@
       "desktop": {
         "schemes": ["sync-clipboard"]
       }
+    },
+    "share-target": {
+      "mimeTypes": ["text/plain", "text/uri-list"]
     }
   }
 }

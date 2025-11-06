@@ -1,4 +1,5 @@
 import { getCurrent, onOpenUrl } from '@tauri-apps/plugin-deep-link'
+import { listen } from '@tauri-apps/api/event'
 import { exists, readTextFile, remove } from '@tauri-apps/plugin-fs'
 import { createApp } from 'vue'
 import App from './App.vue'
@@ -67,6 +68,31 @@ async function checkDeepLinkFallback() {
   }
 }
 
+// 处理Share Target事件的函数
+async function setupShareTargetListener() {
+  try {
+    // 监听share target事件
+    await listen<{ text?: string; files?: string[] }>('tauri://share', (event) => {
+      console.log('收到Share Intent事件:', event.payload)
+      const { text, files } = event.payload
+
+      if (text) {
+        console.log('检测到文本分享，准备跳转到分享目标页面')
+        // 将文本内容作为查询参数传递
+        const encodedText = encodeURIComponent(text)
+        router.replace(`/share-target?text=${encodedText}`)
+      } else if (files && files.length > 0) {
+        console.log('检测到文件分享，准备跳转到分享目标页面')
+        // 将文件列表作为查询参数传递
+        const encodedFiles = encodeURIComponent(JSON.stringify(files))
+        router.replace(`/share-target?files=${encodedFiles}`)
+      }
+    })
+  } catch (error) {
+    console.error('设置Share Target监听器失败（可能是正常情况）:', error)
+  }
+}
+
 // 初始化应用
 async function initApp() {
   const app = createApp(App).use(router)
@@ -97,6 +123,13 @@ async function initApp() {
   setInterval(async () => {
     await checkDeepLinkFallback()
   }, 1000) // 每秒检查一次
+
+  // 5) 设置Share Target监听器
+  try {
+    await setupShareTargetListener()
+  } catch (error) {
+    console.error('初始化Share Target监听器失败:', error)
+  }
 
   app.mount('#app')
 }
