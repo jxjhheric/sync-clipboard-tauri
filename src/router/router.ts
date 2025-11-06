@@ -32,6 +32,11 @@ const router = createRouter({
       name: 'debug',
       component: () => import('@/views/debug/debug.vue'),
     },
+    {
+      path: '/share-target',
+      name: 'share-target',
+      component: () => import('@/views/share-target/share-target.vue'),
+    },
   ],
 })
 
