@@ -52,6 +52,7 @@ echo ""
 echo "🔨 正在生成 Keystore..."
 keytool -genkeypair \
     -keystore "$KEYSTORE_NAME" \
+    -storetype JKS \
     -alias "$KEY_ALIAS" \
     -keyalg RSA \
     -keysize 2048 \
