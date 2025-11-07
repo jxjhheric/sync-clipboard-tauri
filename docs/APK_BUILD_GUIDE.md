@@ -28,6 +28,7 @@
 # 生成 keystore
 keytool -genkeypair \
     -keystore upload-keystore.jks \
+    -storetype JKS \
     -alias upload \
     -keyalg RSA \
     -keysize 2048 \

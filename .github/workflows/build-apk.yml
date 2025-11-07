@@ -128,6 +128,37 @@ jobs:
         run: |
           if [ -n "$ANDROID_KEYSTORE_BASE64" ] && [ -n "$ANDROID_KEYSTORE_PASSWORD" ]; then
             echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/keystore.jks
+
+            # 将 keystore 转换为 JKS 格式，确保兼容性
+            # 首先创建一个临时目录
+            TEMP_DIR=$(mktemp -d)
+
+            # 导出所有密钥对和证书到 PKCS12 格式
+            keytool -importkeystore \
+              -srckeystore app/keystore.jks \
+              -srcstoretype PKCS12 \
+              -srcstorepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -destkeystore "$TEMP_DIR/temp.jks" \
+              -deststoretype JKS \
+              -deststorepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -noprompt 2>/dev/null || \
+            keytool -importkeystore \
+              -srckeystore app/keystore.jks \
+              -srcstoretype JKS \
+              -srcstorepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -destkeystore "$TEMP_DIR/temp.jks" \
+              -deststoretype JKS \
+              -deststorepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -noprompt 2>/dev/null || true
+
+            # 如果转换成功，则使用转换后的文件
+            if [ -f "$TEMP_DIR/temp.jks" ]; then
+              mv "$TEMP_DIR/temp.jks" app/keystore.jks
+            fi
+
+            # 清理临时目录
+            rm -rf "$TEMP_DIR"
+
             # 创建 keystore.properties 文件
             cat > keystore.properties << EOF
           password=$ANDROID_KEYSTORE_PASSWORD
@@ -331,6 +362,33 @@ jobs:
         run: |
           if [ -n "$ANDROID_KEYSTORE_BASE64" ] && [ -n "$ANDROID_KEYSTORE_PASSWORD" ]; then
             echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/keystore.jks
+
+            # 将 keystore 转换为 JKS 格式，确保兼容性
+            TEMP_DIR=$(mktemp -d)
+
+            keytool -importkeystore \
+              -srckeystore app/keystore.jks \
+              -srcstoretype PKCS12 \
+              -srcstorepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -destkeystore "$TEMP_DIR/temp.jks" \
+              -deststoretype JKS \
+              -deststorepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -noprompt 2>/dev/null || \
+            keytool -importkeystore \
+              -srckeystore app/keystore.jks \
+              -srcstoretype JKS \
+              -srcstorepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -destkeystore "$TEMP_DIR/temp.jks" \
+              -deststoretype JKS \
+              -deststorepass "$ANDROID_KEYSTORE_PASSWORD" \
+              -noprompt 2>/dev/null || true
+
+            if [ -f "$TEMP_DIR/temp.jks" ]; then
+              mv "$TEMP_DIR/temp.jks" app/keystore.jks
+            fi
+
+            rm -rf "$TEMP_DIR"
+
             cat > keystore.properties << EOF
           password=$ANDROID_KEYSTORE_PASSWORD
           keyAlias=upload
